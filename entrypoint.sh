@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+export HF_HOME=/workspace/hf_cache
+export TRANSFORMERS_CACHE=/workspace/hf_cache
+
 echo ""
 echo "╔══════════════════════════════════════════╗"
 echo "║              SkyCaption                  ║"
@@ -16,19 +19,19 @@ if [ -d "$MODEL_CACHE" ]; then
     echo "      ✅ Model found — skipping download"
 else
     echo "      ⬇  Downloading model (~7 GB, one time only)..."
-    python3 - <<'PYEOF'
+    python3 -c "
 from transformers import AutoProcessor, LlavaForConditionalGeneration
 import torch, os
-MODEL_ID = "fancyfeast/llama-joycaption-beta-one-hf-llava"
-CACHE    = "/workspace/hf_cache"
+MODEL_ID = 'fancyfeast/llama-joycaption-beta-one-hf-llava'
+CACHE    = '/workspace/hf_cache'
 os.makedirs(CACHE, exist_ok=True)
-print("      Downloading processor...")
+print('      Downloading processor...')
 AutoProcessor.from_pretrained(MODEL_ID, cache_dir=CACHE)
-print("      Downloading model weights...")
+print('      Downloading model weights...')
 LlavaForConditionalGeneration.from_pretrained(
-    MODEL_ID, device_map="auto", torch_dtype=torch.bfloat16, cache_dir=CACHE)
-print("      ✅ Done")
-PYEOF
+    MODEL_ID, device_map='auto', torch_dtype=torch.bfloat16, cache_dir=CACHE)
+print('      ✅ Done')
+"
 fi
 
 echo ""
