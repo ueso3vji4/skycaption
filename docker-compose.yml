@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  skycaption:
+    build: .
+    image: skycaption:latest
+    ports:
+      - "5000:5000"
+    volumes:
+      # Mount a local folder as the persistent workspace.
+      # The model cache, datasets, and outputs all live here.
+      - ./workspace:/workspace
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
+    environment:
+      - HF_HOME=/workspace/hf_cache
+      - TRANSFORMERS_CACHE=/workspace/hf_cache
